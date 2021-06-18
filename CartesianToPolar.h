@@ -37,10 +37,11 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   } else {
     const double invR = 1. / cache.prevR;
     const double invR2 = invR * invR;
+    //The R we can always do exact not too expensive
+    const double newR = std::sqrt(cart.x * cart.x + cart.y * cart.y)
+    //Approximation for phi
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
-    const double firstRterm = cart.x * invR * dX + cart.y * invR * dY;
-    const double newR = cache.prevR + firstRterm;
     const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dY;
     double newPhi = cache.prevPhi - firstPhiterm;
     if (newPhi > M_PI) {
