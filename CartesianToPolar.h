@@ -28,6 +28,13 @@ precisePol(const cartesian& cart)
 }
 
 inline polar
+altPol(const cartesian& cart)
+{
+  const double R = std::sqrt(cart.x * cart.x + cart.y * cart.y);
+  return { R, std::copysign(std::acos(cart.x / R), cart.y) };
+}
+
+inline polar
 fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
 {
   polar result;
@@ -37,9 +44,9 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   } else {
     const double invR = 1. / cache.prevR;
     const double invR2 = invR * invR;
-    //The R we can always do exact not too expensive
+    // The R we can always do exact not too expensive
     const double newR = std::sqrt(cart.x * cart.x + cart.y * cart.y);
-    //Approximation for phi
+    // Approximation for phi
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
     const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dY;
