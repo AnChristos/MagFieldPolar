@@ -1,5 +1,4 @@
 #include <cmath>
-#include <iostream>
 struct cartesian
 {
   double x{ 0. };
@@ -32,7 +31,7 @@ inline polar
 fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
 {
   polar result;
-  if (cache.steps == -1 || cache.steps > 10 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 4 || forceReset) {
     result = precisePol(cart);
     cache.steps = 0;
   } else {
@@ -48,7 +47,6 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
       newPhi -= 2. * M_PI;
     }
     result = { newR, newPhi };
-    std::cout << newR << std::endl;
   }
   cache.prevY = cart.y;
   cache.prevX = cart.x;

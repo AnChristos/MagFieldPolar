@@ -18,3 +18,8 @@ add_executable(MagFieldPolar_test
 add_executable(testAccuracy
   testAccuracy.cxx)
 
+add_executable(CartesianToPolar_bench
+	             CartesianToPolar_bench.cxx)
+
+target_link_libraries(CartesianToPolar_bench benchmark::benchmark)
+
