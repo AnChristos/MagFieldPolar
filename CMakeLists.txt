@@ -15,3 +15,6 @@ find_package (Threads)
 add_executable(MagFieldPolar_test
   BFieldCache.cxx MagFieldPolar_test.cxx)
 
+add_executable(testAccuracy
+  testAccuracy.cxx)
+
