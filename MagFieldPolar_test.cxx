@@ -103,21 +103,17 @@ main()
   double xyz[3] = { 0, 0, 0 };
   double bxyz[3] = { 0, 0, 0 };
   double derivatives[9] = { 0 };
-
   BFieldData data{};
   BFieldCache cache3d;
   
-  for (unsigned int i = 0; i < 10; ++i) {
-
-    double r1 = r0 + 5 + i * 10.;
+  for (unsigned int i = 0; i < 95; ++i) {
+    double r1 = r0 + 5 + i * 1.;
     std::cout << '\n' << " ----  r " << r1 << " ----" << '\n';
-
     // Here us what tracking passes
     xyz[0] = r1 * cos(phi0);
     xyz[1] = r1 * sin(phi0);
     xyz[2] = z0;
     // So let pretend we do not know about it
-    
     const double x = xyz[0];
     const double y = xyz[1];
     const double z = xyz[2];
