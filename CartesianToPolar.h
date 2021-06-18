@@ -41,7 +41,7 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
     const double dY = cart.y - cache.prevY;
     const double firstRterm = cart.x * invR * dX + cart.y * invR * dY;
     const double newR = cache.prevR + firstRterm;
-    const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dX;
+    const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dY;
     double newPhi = cache.prevPhi - firstPhiterm;
     if (newPhi > M_PI) {
       newPhi -= 2. * M_PI;
