@@ -15,7 +15,7 @@ struct fastCache
 {
   double prevX{ 0. };
   double prevY{ 0. };
-  double prevR{ 0. };
+  double prevInvR2{ 0. };
   double prevPhi{ 0. };
   int steps{ -1 };
 };
@@ -41,19 +41,18 @@ inline polar
 fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
 {
   polar result;
-  if (cache.steps == -1 || cache.steps > 2 || forceReset) {
-    result = precisePol(cart);
+  const double newR2 = cart.x * cart.x + cart.y * cart.y;
+  const double newR = std::sqrt(newR2);
+  if (cache.steps == -1 || cache.steps > 4 || forceReset) {
+    result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
-    // The R we can always do exact not too expensive
-    const double newR = std::sqrt(cart.x * cart.x + cart.y * cart.y);
     // Approximation for phi
-    const double invR = 1. / cache.prevR;
-    const double invR2 = invR * invR;
+    const double invR2 = cache.prevInvR2;
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
-    const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dY;
-    double newPhi = cache.prevPhi + firstPhiterm;
+    const double firstPhiTerm = (-cart.y * dX + cart.x * dY) * invR2;
+    double newPhi = cache.prevPhi + firstPhiTerm;
     if (newPhi > M_PI) {
       newPhi -= 2. * M_PI;
     }
@@ -61,7 +60,7 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   }
   cache.prevY = cart.y;
   cache.prevX = cart.x;
-  cache.prevR = result.r;
+  cache.prevInvR2 = 1. / (newR2);
   cache.prevPhi = result.phi;
   ++cache.steps;
   return result;
@@ -72,19 +71,18 @@ inline polar
 fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
 {
   polar result;
+  const double newR2 = cart.x * cart.x + cart.y * cart.y;
+  const double newR = std::sqrt(newR2);
   if (cache.steps == -1 || cache.steps > 10 || forceReset) {
-    result = precisePol(cart);
+    result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
-    // The R we can always do exact not too expensive
-    const double newR = std::sqrt(cart.x * cart.x + cart.y * cart.y);
     // Approximation for phi
-    const double invR = 1. / cache.prevR;
-    const double invR2 = invR * invR;
+    const double invR2 = cache.prevInvR2;
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
-    const double firstPhiterm = -cart.y * invR2 * dX + cart.x * invR2 * dY;
-    double newPhi = cache.prevPhi + firstPhiterm;
+    const double firstPhiTerm = (-cart.y * dX + cart.x * dY) * invR2;
+    double newPhi = cache.prevPhi + firstPhiTerm;
     if (newPhi > M_PI) {
       newPhi -= 2. * M_PI;
     }
@@ -92,7 +90,7 @@ fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
   }
   cache.prevY = cart.y;
   cache.prevX = cart.x;
-  cache.prevR = result.r;
+  cache.prevInvR2 = 1. / (newR2);
   cache.prevPhi = result.phi;
   ++cache.steps;
   return result;
