@@ -43,7 +43,7 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 4 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 3 || forceReset) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
@@ -73,16 +73,25 @@ fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 10 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 3 || forceReset) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
     // Approximation for phi
     const double invR2 = cache.prevInvR2;
+    const double invR4 = invR2 * invR2;
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
+    const double XY = cart.y * cart.x;
     const double firstPhiTerm = (-cart.y * dX + cart.x * dY) * invR2;
-    double newPhi = cache.prevPhi + firstPhiTerm;
+    // 1/2 * 2xy / (x^2+y^2)^2 * dx * dx +
+    // 1/2 * - 2xy / (x^2+y^2)^2  * dy * dy +
+    // (y^2 -x^2)/(x^2+y^2)^2   * dx * dy
+    const double secondPhiTerm =
+      (XY * (dX * dX - dY * dY) +
+       (cart.y * cart.y - cart.x * cart.x) * dX * dY) *
+      invR4;
+    double newPhi = cache.prevPhi + firstPhiTerm + secondPhiTerm;
     if (newPhi > M_PI) {
       newPhi -= 2. * M_PI;
     }
