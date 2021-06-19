@@ -10,8 +10,7 @@ precise(benchmark::State& state)
     cartesian init{ r1 * std::cos(phi), r1 * std::sin(phi) };
     const int n = state.range(0);
     for (int range = 0; range < n; ++range) {
-      init.x += 0.1;
-      init.y += 0.1;
+      benchmark::DoNotOptimize(&init);
       polar exact = precisePol(init);
       benchmark::DoNotOptimize(&exact);
       benchmark::ClobberMemory();
@@ -30,8 +29,7 @@ alt(benchmark::State& state)
     cartesian init{ r1 * std::cos(phi), r1 * std::sin(phi) };
     const int n = state.range(0);
     for (int range = 0; range < n; ++range) {
-      init.x += 0.1;
-      init.y += 0.1;
+      benchmark::DoNotOptimize(&init);
       polar alt = altPol(init);
       benchmark::DoNotOptimize(&alt);
       benchmark::ClobberMemory();
@@ -51,8 +49,7 @@ quick(benchmark::State& state)
     cartesian init{ r1 * std::cos(phi), r1 * std::sin(phi) };
     const int n = state.range(0);
     for (int range = 0; range < n; ++range) {
-      init.x += 0.1;
-      init.y += 0.1;
+      benchmark::DoNotOptimize(&init);
       polar fast = fastPol(init, cache);
       benchmark::DoNotOptimize(&fast);
       benchmark::ClobberMemory();
@@ -72,8 +69,7 @@ quick1(benchmark::State& state)
     cartesian init{ r1 * std::cos(phi), r1 * std::sin(phi) };
     const int n = state.range(0);
     for (int range = 0; range < n; ++range) {
-      init.x += 0.1;
-      init.y += 0.1;
+      benchmark::DoNotOptimize(&init);
       polar fast = fastPol1(init, cache);
       benchmark::DoNotOptimize(&fast);
       benchmark::ClobberMemory();
