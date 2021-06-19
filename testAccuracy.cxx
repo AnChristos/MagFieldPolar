@@ -6,7 +6,7 @@ using dbl = std::numeric_limits<double>;
 int
 main()
 {
-  double r0{ 1250 }, phi0{ 0.0 };
+  double r0{ 1250 }, phi0{ -M_PI/2};
   fastCache cache1{};
   fastCache cache2{};
   for (unsigned int i = 0; i < 100; ++i) {
@@ -21,18 +21,18 @@ main()
     std::cout << " =======================" << '\n';
     std::cout << " VERSION 1" << '\n';
     std::cout << " exact r : " << exact.r << " fast 1 r : " << fast1.r
-              << " rel diff " << std::abs(exact.r - fast1.r) / exact.r << '\n';
+              << " diff " << std::abs(exact.r - fast1.r) << '\n';
  
     std::cout << " exact phi : " << exact.phi << " fast 1 phi : " << fast1.phi
-              << " rel diff " << std::abs(exact.phi - fast1.phi) / exact.phi
+              << " diff " << std::abs(exact.phi - fast1.phi)
               << '\n';
     //
     std::cout << " VERSION 2" << '\n';
     std::cout << " exact r : " << exact.r << " fast 2 r : " << fast2.r
-              << " rel diff " << std::abs(exact.r - fast2.r) / exact.r << '\n';
+              << " diff " << std::abs(exact.r - fast2.r)  << '\n';
  
     std::cout << " exact phi : " << exact.phi << " fast 2 phi : " << fast2.phi
-              << " rel diff " << std::abs(exact.phi - fast2.phi) / exact.phi
+              << " diff " << std::abs(exact.phi - fast2.phi)
               << '\n';
     std::cout  << '\n';
  

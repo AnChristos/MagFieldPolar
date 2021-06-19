@@ -72,7 +72,7 @@ inline polar
 fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
 {
   polar result;
-  if (cache.steps == -1 || cache.steps > 4 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 10 || forceReset) {
     result = precisePol(cart);
     cache.steps = 0;
   } else {
