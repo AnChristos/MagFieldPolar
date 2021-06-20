@@ -43,7 +43,8 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 2 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 2 || forceReset ||
+      cache.prevR2 == 0.) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
@@ -73,7 +74,8 @@ fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 2 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 2 || forceReset ||
+      cache.prevR2 == 0.) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
