@@ -21,5 +21,5 @@ The following script from this repo will install the benchmark under ``${HOME}/.
 
 # Example 
 
-``./MagFieldPolar_test --benchmark_report_aggregates_only=true --benchmark_repetitions=20``
+``./CartesianToPolar_bench --benchmark_report_aggregates_only=true --benchmark_repetitions=20``
 
