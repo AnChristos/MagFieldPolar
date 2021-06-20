@@ -6,7 +6,7 @@ using dbl = std::numeric_limits<double>;
 int
 main()
 {
-  double r0{ 1250 }, phi0{ -M_PI/2};
+  double r0{ 1250 }, phi0{M_PI};
   fastCache cache1{};
   fastCache cache2{};
   for (unsigned int i = 0; i < 100; ++i) {

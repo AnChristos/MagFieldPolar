@@ -15,7 +15,7 @@ struct fastCache
 {
   double prevX{ 0. };
   double prevY{ 0. };
-  double prevInvR2{ 0. };
+  double prevR2{ 0. };
   double prevPhi{ 0. };
   int steps{ -1 };
 };
@@ -43,12 +43,12 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 3 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 2 || forceReset) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
     // Approximation for phi
-    const double invR2 = cache.prevInvR2;
+    const double invR2 = 1 / cache.prevR2;
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
     const double firstPhiTerm = (-cart.y * dX + cart.x * dY) * invR2;
@@ -60,7 +60,7 @@ fastPol(const cartesian& cart, fastCache& cache, bool forceReset = false)
   }
   cache.prevY = cart.y;
   cache.prevX = cart.x;
-  cache.prevInvR2 = 1. / (newR2);
+  cache.prevR2 = newR2;
   cache.prevPhi = result.phi;
   ++cache.steps;
   return result;
@@ -73,25 +73,39 @@ fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
   polar result;
   const double newR2 = cart.x * cart.x + cart.y * cart.y;
   const double newR = std::sqrt(newR2);
-  if (cache.steps == -1 || cache.steps > 3 || forceReset) {
+  if (cache.steps == -1 || cache.steps > 2 || forceReset) {
     result = { newR, std::atan2(cart.y, cart.x) };
     cache.steps = 0;
   } else {
-    // Approximation for phi
-    const double invR2 = cache.prevInvR2;
+    /*
+     * Approximation for phi
+     *
+     * Taylor expansion of the 2D
+     * atan2 function
+     *
+     * 1st term
+     *
+     *  -y/(x^2+y^2) * dx + x/(x^2+y^2) dy
+     *
+     * 2nd term
+     *
+     * 1/2 * 2xy / (x^2+y^2)^2 * dx * dx +
+     * 1/2 * - 2xy / (x^2+y^2)^2  * dy * dy +
+     * (y^2 -x^2)/(x^2+y^2)^2   * dx * dy
+     */
+    const double invR2 = 1. / cache.prevR2;
     const double invR4 = invR2 * invR2;
     const double dX = cart.x - cache.prevX;
     const double dY = cart.y - cache.prevY;
-    const double XY = cart.y * cart.x;
-    const double firstPhiTerm = (-cart.y * dX + cart.x * dY) * invR2;
-    // 1/2 * 2xy / (x^2+y^2)^2 * dx * dx +
-    // 1/2 * - 2xy / (x^2+y^2)^2  * dy * dy +
-    // (y^2 -x^2)/(x^2+y^2)^2   * dx * dy
+    const double YdY = cart.y * dY;
+    const double XdX = cart.x * dX;
+    const double YdX = cart.y * dX;
+    const double XdY = cart.x * dY;
+    const double firstPhiTerm = (-YdX + XdY);
     const double secondPhiTerm =
-      (XY * (dX * dX - dY * dY) +
-       (cart.y * cart.y - cart.x * cart.x) * dX * dY) *
-      invR4;
-    double newPhi = cache.prevPhi + firstPhiTerm + secondPhiTerm;
+      (XdX * YdX - XdY * YdY + YdX * YdY - XdX * XdY);
+    double newPhi =
+      cache.prevPhi + firstPhiTerm * invR2 + secondPhiTerm * invR4;
     if (newPhi > M_PI) {
       newPhi -= 2. * M_PI;
     }
@@ -99,7 +113,7 @@ fastPol1(const cartesian& cart, fastCache& cache, bool forceReset = false)
   }
   cache.prevY = cart.y;
   cache.prevX = cart.x;
-  cache.prevInvR2 = 1. / (newR2);
+  cache.prevR2 = newR2;
   cache.prevPhi = result.phi;
   ++cache.steps;
   return result;
